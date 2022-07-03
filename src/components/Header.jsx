@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 
-export const Header = () => {
+export const Header = ({ currentAccount, connectWalletHandler }) => {
   const [expanded, setExpanded] = useState(false);
 
-  const connectWalletHandler = () => {};
   return (
     <header className="py-4 bg-white sm:py-3 border-b border-gray-100">
       <div className="container px-4 mx-auto sm:px-6 lg:px-8">
@@ -70,38 +69,39 @@ export const Header = () => {
 
           <div className="hidden md:space-x-10 md:items-center md:justify-center md:flex">
             <a
-              href="#"
+              href={`/collection/${currentAccount}`}
               title=""
               className="text-xs font-bold tracking-widest text-gray-900 uppercase transition-all duration-200 hover:text-indigo-600"
             >
-              Services
+              Collection
             </a>
 
             <a
-              href="#"
+              href="/mint"
               title=""
               className="text-xs font-bold tracking-widest text-gray-900 uppercase transition-all duration-200 hover:text-indigo-600"
             >
-              Latest Collections
-            </a>
-
-            <a
-              href="#"
-              title=""
-              className="text-xs font-bold tracking-widest text-gray-900 uppercase transition-all duration-200 hover:text-indigo-600"
-            >
-              Blog
+              New Mint
             </a>
           </div>
 
           <div className="hidden md:flex">
-            <a
-              href="/connect"
-              className="inline-flex items-center justify-center px-6 py-2 sm:py-2.5 text-base font-semibold text-white transition-all duration-200 bg-gray-900 rounded-lg sm:text-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
-              onClick={connectWalletHandler}
-            >
-              Connect Wallet
-            </a>
+            {!currentAccount ? (
+              <a
+                href="/connect"
+                className="inline-flex items-center justify-center px-6 py-2 sm:py-2.5 text-base font-semibold text-white transition-all duration-200 bg-gray-900 rounded-lg sm:text-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                onClick={connectWalletHandler}
+              >
+                Connect Wallet
+              </a>
+            ) : (
+              <a
+                href="/connect"
+                className="inline-flex items-center justify-center px-6 py-2 sm:py-2.5 text-base font-semibold text-white transition-all duration-200 bg-gray-900 rounded-lg sm:text-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+              >
+                connected
+              </a>
+            )}
           </div>
         </nav>
 

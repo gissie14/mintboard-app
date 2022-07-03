@@ -1,16 +1,17 @@
 // NftUploader.jsx
 import { ethers } from "ethers";
-import { Web3Storage } from 'web3.storage'
+import { Web3Storage } from "web3.storage";
 import Web3Mint from "../../utils/Web3Mint.json";
 
 import { Button } from "@mui/material";
 import React from "react";
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 import ImageLogo from "./image.svg";
 import "./NftUploader.css";
 
 const NftUploader = () => {
-  const API_KEY ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGIzRjM4YjMyYjhmRWNmNjc3MTkxMjk2ODAzMjQyNGYxOTk3RWI0YzgiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTY3MjE2MDkzODgsIm5hbWUiOiJtaW50Ym9hcmQifQ.i3mcg6eAG1vZmWsZVclaqKERhe_yyWV7Y8JLMRP11Rs"
+  const API_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGIzRjM4YjMyYjhmRWNmNjc3MTkxMjk2ODAzMjQyNGYxOTk3RWI0YzgiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTY3MjE2MDkzODgsIm5hbWUiOiJtaW50Ym9hcmQifQ.i3mcg6eAG1vZmWsZVclaqKERhe_yyWV7Y8JLMRP11Rs";
 
   /*
    * ユーザーのウォレットアドレスを格納するために使用する状態変数を定義します。
@@ -37,7 +38,7 @@ const NftUploader = () => {
       console.log("No authorized account found");
     }
   };
-  const connectWallet = async () =>{
+  const connectWallet = async () => {
     try {
       const { ethereum } = window;
       if (!ethereum) {
@@ -59,39 +60,41 @@ const NftUploader = () => {
       console.log(error);
     }
   };
-const askContractToMintNft = async (ipfs) => {
-  const CONTRACT_ADDRESS =
-    "0xb92C6Cdb677A2FdaA6821da1583BE14C6cDe19E0";
-  try {
-    const { ethereum } = window;
-    if (ethereum) {
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner();
-      const connectedContract = new ethers.Contract(
-        CONTRACT_ADDRESS,
-        Web3Mint.abi,
-        signer
-      );
-      console.log("Going to pop wallet now to pay gas...");
-      let nftTxn = await connectedContract.mintIpfsNFT("sample",ipfs);
-      console.log("Mining...please wait.");
-      await nftTxn.wait();
-      console.log(
-        `Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`
-      );
-    } else {
-      console.log("Ethereum object doesn't exist!");
+  const askContractToMintNft = async (ipfs) => {
+    const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
+    try {
+      const { ethereum } = window;
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const connectedContract = new ethers.Contract(
+          CONTRACT_ADDRESS,
+          Web3Mint.abi,
+          signer
+        );
+        console.log("Going to pop wallet now to pay gas...");
+        let nftTxn = await connectedContract.mintIpfsNFT("sample", ipfs);
+        console.log("Mining...please wait.");
+        await nftTxn.wait();
+        console.log(
+          `Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`
+        );
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
-  }
-};
+  };
 
   const renderNotConnectedContainer = () => (
-      <button onClick={connectWallet} className="cta-button connect-wallet-button">
-        Connect to Wallet
-      </button>
-    );
+    <button
+      onClick={connectWallet}
+      className="cta-button connect-wallet-button"
+    >
+      Connect to Wallet
+    </button>
+  );
   /*
    * ページがロードされたときに useEffect()内の関数が呼び出されます。
    */
@@ -100,21 +103,21 @@ const askContractToMintNft = async (ipfs) => {
   }, []);
 
   const imageToNFT = async (e) => {
-        const client = new Web3Storage({ token: API_KEY })
-        const image = e.target
-        console.log(image)
+    const client = new Web3Storage({ token: API_KEY });
+    const image = e.target;
+    console.log(image);
 
-        const rootCid = await client.put(image.files, {
-            name: 'experiment',
-            maxRetries: 3
-        })
-        const res = await client.get(rootCid) // Web3Response
-        const files = await res.files() // Web3File[]
-        for (const file of files) {
-          console.log("file.cid:",file.cid)
-          askContractToMintNft(file.cid)
-        }
+    const rootCid = await client.put(image.files, {
+      name: "experiment",
+      maxRetries: 3,
+    });
+    const res = await client.get(rootCid); // Web3Response
+    const files = await res.files(); // Web3File[]
+    for (const file of files) {
+      console.log("file.cid:", file.cid);
+      askContractToMintNft(file.cid);
     }
+  };
   return (
     <div className="outerBox">
       {currentAccount === "" ? (
@@ -130,12 +133,24 @@ const askContractToMintNft = async (ipfs) => {
           <img src={ImageLogo} alt="imagelogo" />
           <p>ここにドラッグ＆ドロップしてね</p>
         </div>
-        <input className="imageUploadInput" multiple name="imageURL" type="file" accept=".jpg , .jpeg , .png" onChange={imageToNFT}/>
+        <input
+          className="imageUploadInput"
+          multiple
+          name="imageURL"
+          type="file"
+          accept=".jpg , .jpeg , .png"
+          onChange={imageToNFT}
+        />
       </div>
       <p>または</p>
       <Button variant="contained">
         ファイルを選択
-        <input className="imageUploadInput" type="file" accept=".jpg , .jpeg , .png" onChange={imageToNFT} />
+        <input
+          className="imageUploadInput"
+          type="file"
+          accept=".jpg , .jpeg , .png"
+          onChange={imageToNFT}
+        />
       </Button>
     </div>
   );

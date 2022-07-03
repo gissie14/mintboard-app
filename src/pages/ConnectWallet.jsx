@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "components/Layout";
 
-export const ConnectWallet = () => {
+export const ConnectWallet = ({ connectWalletHandler }) => {
   return (
     <>
       <section className="py-12 bg-white sm:py-16 lg:py-20">
@@ -49,10 +49,9 @@ export const ConnectWallet = () => {
                   Metamask
                 </p>
 
-                <a
-                  href="#"
-                  title=""
+                <button
                   className="text-gray-400 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                  onClick={connectWalletHandler}
                 >
                   <svg
                     className="w-6 h-6"
@@ -69,7 +68,7 @@ export const ConnectWallet = () => {
                     />
                   </svg>
                   <span className="absolute inset-0" aria-hidden="true"></span>
-                </a>
+                </button>
               </div>
             </div>
 
